@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leaderboard | Typing Arena</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <h1>Typing Arena</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="test.html">Test</a></li>
+      <li><a href="rewards.html">Rewards</a></li>
+      <li><a href="history.html">Test History</a></li>
+    </ul>
+  </nav>
+
+  <section class="rank">
+    <h2>Top Typists</h2>
+    <ol id="rank-list"></ol>
+  </section>
+
+  <footer>
+    <p>Developed by: <b>Navish & Naresh</b> | Department of CSE</p>
+  </footer>
+
+  <script>
+    const rankList = document.getElementById("rank-list");
+    const history = JSON.parse(localStorage.getItem("typingHistory")) || [];
+
+    if (history.length === 0) {
+      rankList.innerHTML = "<p>No ranking data yet.</p>";
+    } else {
+      const sorted = history.sort((a, b) => b.wpm - a.wpm).slice(0, 5);
+      sorted.forEach((user, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i + 1}. ${user.date} – ${user.wpm} WPM (${user.accuracy}%)`;
+        rankList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "Typing Arena",
+  "short_name": "TypingArena",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ff6600",
+  "theme_color": "#111111",
+  "description": "Sharpen your typing skills, challenge yourself, and climb the leaderboard!",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  
+  "display_override": ["window-controls-overlay"]
+}
+

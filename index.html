@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Arena</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff6600">
+</head>
+<body class="home-body">
+  <nav>
+    <h1>Typing Arena</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="test.html">Test</a></li>
+      <li><a href="rewards.html">Rewards</a></li>
+      <li><a href="history.html">Test History</a></li>
+      <li><a href="rank.html">Rank</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h2 id="typing-text"></h2>
+      <p>Sharpen your typing skills, challenge yourself, and climb the leaderboard!</p>
+      <a href="test.html" class="btn start-btn">Start Typing Test</a>
+    </div>
+
+    <div class="hero-image">
+      <img src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png" alt="Typing Illustration">
+    </div>
+  </section>
+
+  <footer>
+    <p>Developed by: <b>Navish & Naresh</b> | Department of CSE</p>
+  </footer>
+
+  <script>
+    const text = "Welcome to Typing Arena";
+    const typingText = document.getElementById("typing-text");
+    let index = 0;
+
+    function typeEffect() {
+      if (index < text.length) {
+        typingText.innerHTML = text.slice(0, index + 1) + '<span class="cursor">|</span>';
+        index++;
+        setTimeout(typeEffect, 100);
+      } else {
+        typingText.innerHTML = text + '<span class="cursor blink">|</span>';
+      }
+    }
+
+    window.onload = typeEffect;
+    if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"))
+      .catch(err => console.log("SW registration failed:", err));
+  }
+  </script>
+</body>
+</html>

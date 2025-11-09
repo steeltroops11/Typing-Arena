@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Test | Typing Arena</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <h1>Typing Arena</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="rewards.html">Rewards</a></li>
+      <li><a href="history.html">Test History</a></li>
+      <li><a href="rank.html">Rank</a></li>
+    </ul>
+  </nav>
+
+  <section class="test-area">
+    <h2>Typing Arena - Test Mode</h2>
+
+    <div class="level-select">
+      <label>Select Level: </label>
+      <select id="level">
+        <option value="easy">Easy (30s)</option>
+        <option value="medium">Medium (40s)</option>
+        <option value="hard">Hard (50s)</option>
+      </select>
+    </div>
+
+    <p id="display-text" class="quote">Press "Start Test" to get your first sentence.</p>
+
+    <div class="typing-box">
+      <textarea id="input-text" placeholder="Click 'Start Test' to begin..." rows="5" disabled></textarea>
+    </div>
+
+    <div class="info">
+      <button id="start-btn">Start Test</button>
+      <p>⏱️ Time Left: <span id="timer">0</span>s</p>
+      <p>⚡ WPM: <span id="wpm">0</span></p>
+      <p>🎯 Accuracy: <span id="accuracy">0</span>%</p>
+    </div>
+  </section>
+
+  <div id="reward-popup" class="hidden">
+    <div class="popup-content">
+      <h3 id="reward-message"></h3>
+      <button onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Developed by: <b>Navish & Naresh</b> | Department of CSE</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
