@@ -1,0 +1,28 @@
+{
+  "name": "typing-arena",
+  "version": "1.0.0",
+  "description": "Typing Arena - A Progressive Web App for typing practice",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build complete - ready for Capacitor'",
+    "sync": "npx cap sync",
+    "android": "npx cap open android",
+    "copy": "npx cap copy"
+  },
+  "keywords": [
+    "typing",
+    "practice",
+    "pwa",
+    "mobile"
+  ],
+  "author": "Navish & Naresh",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "^5.5.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.5.0",
+    "@capacitor/android": "^5.5.0"
+  }
+}
+

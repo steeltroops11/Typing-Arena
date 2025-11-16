@@ -5,48 +5,97 @@ let timeLeft;
 let totalTime;
 let currentText = "";
 
-const sentences = {
+// Fallback sentences if API fails
+const fallbackSentences = {
   easy: [
     "The quick brown fox jumps over the lazy dog.",
     "Typing fast helps you save time every day.",
-    "Coding is fun when you understand the logic."
+    "Coding is fun when you understand the logic.",
+    "Practice makes perfect in everything you do.",
+    "Technology changes the world every single day."
   ],
   medium: [
     "Practice typing daily to improve your accuracy and speed.",
     "Good typing habits can make your workflow more efficient.",
-    "Always keep your fingers on the home row for better control."
+    "Always keep your fingers on the home row for better control.",
+    "Consistency is key when learning any new skill.",
+    "The best way to learn is through regular practice."
   ],
   hard: [
     "Typing is not just about speed but also about maintaining rhythm and precision while avoiding errors during long paragraphs.",
-    "A fast typist maintains focus, keeps posture straight, and balances both accuracy and momentum over extended sentences."
+    "A fast typist maintains focus, keeps posture straight, and balances both accuracy and momentum over extended sentences.",
+    "Mastering the keyboard requires dedication, patience, and continuous improvement through structured practice sessions.",
+    "Professional typists understand that accuracy and speed work together to create efficient communication."
   ]
 };
 
-const startBtn = document.getElementById("start-btn");
-const inputText = document.getElementById("input-text");
-const displayText = document.getElementById("display-text");
-const timerEl = document.getElementById("timer");
-const wpmEl = document.getElementById("wpm");
-const accuracyEl = document.getElementById("accuracy");
-const rewardPopup = document.getElementById("reward-popup");
-const rewardMsg = document.getElementById("reward-message");
-const levelSelect = document.getElementById("level");
+// API Configuration - Using Quotable API (free, no key required)
+const API_ENDPOINTS = {
+  easy: "https://api.quotable.io/random?minLength=20&maxLength=60",
+  medium: "https://api.quotable.io/random?minLength=50&maxLength=100",
+  hard: "https://api.quotable.io/random?minLength=100&maxLength=200"
+};
 
-startBtn.addEventListener("click", startTest);
-inputText.addEventListener("input", checkProgress);
+// Fetch random sentence from API
+async function fetchRandomSentence(level) {
+  try {
+    const response = await fetch(API_ENDPOINTS[level]);
+    if (!response.ok) throw new Error("API request failed");
+    const data = await response.json();
+    return data.content;
+  } catch (error) {
+    console.warn("API fetch failed, using fallback:", error);
+    // Use fallback sentences
+    const fallback = fallbackSentences[level];
+    return fallback[Math.floor(Math.random() * fallback.length)];
+  }
+}
 
-function startTest() {
-  if (started) return;
+// DOM Elements - will be initialized when available
+let startBtn, inputText, displayText, timerEl, wpmEl, accuracyEl, rewardPopup, rewardMsg, levelSelect;
+
+// Initialize DOM elements and event listeners
+function initTypingTest() {
+  startBtn = document.getElementById("start-btn");
+  inputText = document.getElementById("input-text");
+  displayText = document.getElementById("display-text");
+  timerEl = document.getElementById("timer");
+  wpmEl = document.getElementById("wpm");
+  accuracyEl = document.getElementById("accuracy");
+  rewardPopup = document.getElementById("reward-popup");
+  rewardMsg = document.getElementById("reward-message");
+  levelSelect = document.getElementById("level");
+
+  if (startBtn) startBtn.addEventListener("click", startTest);
+  if (inputText) inputText.addEventListener("input", checkProgress);
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTypingTest);
+} else {
+  initTypingTest();
+}
+
+async function startTest() {
+  if (started || !startBtn || !inputText || !displayText || !timerEl || !levelSelect) return;
+  
+  // Show loading state
+  startBtn.disabled = true;
+  startBtn.textContent = "Loading...";
+  if (displayText) displayText.textContent = "Fetching a new sentence...";
+  
+  const level = levelSelect.value;
+  
+  // Fetch sentence from API
+  currentText = await fetchRandomSentence(level);
+  if (displayText) displayText.textContent = currentText;
+  
   started = true;
   inputText.disabled = false;
   inputText.value = "";
   inputText.focus();
-  startBtn.disabled = true;
-
-  const level = levelSelect.value;
-  const randomIndex = Math.floor(Math.random() * sentences[level].length);
-  currentText = sentences[level][randomIndex];
-  displayText.textContent = currentText;
+  if (startBtn) startBtn.textContent = "Test Started";
 
   // Timer according to level
   if (level === "easy") totalTime = 30;
@@ -54,12 +103,12 @@ function startTest() {
   else totalTime = 50;
 
   timeLeft = totalTime;
-  timerEl.textContent = timeLeft;
+  if (timerEl) timerEl.textContent = timeLeft;
   startTime = new Date();
 
   timerInterval = setInterval(() => {
     timeLeft--;
-    timerEl.textContent = timeLeft;
+    if (timerEl) timerEl.textContent = timeLeft;
     if (timeLeft <= 0) {
       endTest();
     }
@@ -67,6 +116,7 @@ function startTest() {
 }
 
 function checkProgress() {
+  if (!inputText || !currentText) return;
   const typed = inputText.value.trim();
   if (typed === currentText.trim()) {
     endTest(true);
@@ -78,6 +128,8 @@ function endTest(finishedEarly = false) {
   started = false;
   clearInterval(timerInterval);
 
+  if (!inputText || !currentText) return;
+
   const endTime = new Date();
   const timeTaken = (endTime - startTime) / 1000 / 60; // minutes
   const typedText = inputText.value.trim();
@@ -86,15 +138,18 @@ function endTest(finishedEarly = false) {
   const accuracy = Math.round((correctWords / wordsTyped) * 100) || 0;
   const wpm = Math.round(wordsTyped / timeTaken) || 0;
 
-  wpmEl.textContent = wpm;
-  accuracyEl.textContent = accuracy;
+  if (wpmEl) wpmEl.textContent = wpm;
+  if (accuracyEl) accuracyEl.textContent = accuracy;
 
   inputText.disabled = true;
-  startBtn.disabled = false;
+  if (startBtn) {
+    startBtn.disabled = false;
+    startBtn.textContent = "Start Test";
+  }
   saveResult(wpm, accuracy);
   showReward(wpm);
 
-  if (finishedEarly) timerEl.textContent = "Done!";
+  if (finishedEarly && timerEl) timerEl.textContent = "Done!";
 }
 
 function countCorrectWords(sample, typed) {
@@ -116,6 +171,7 @@ function saveResult(wpm, accuracy) {
 }
 
 function showReward(wpm) {
+  if (!rewardMsg || !rewardPopup) return;
   let message = "";
   if (wpm < 30) message = "🏅 Beginner! Keep Practicing!";
   else if (wpm < 50) message = "🥈 Intermediate! Nice Work!";
@@ -126,7 +182,7 @@ function showReward(wpm) {
 }
 
 function closePopup() {
-  rewardPopup.classList.remove("show");
+  if (rewardPopup) rewardPopup.classList.remove("show");
 }
 const textArray = [
   "Welcome to Typing Arena",
@@ -144,6 +200,43 @@ const debounce = (func, wait) => {
     timeout = setTimeout(later, wait);
   };
 };
+
+// Theme Management
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeSelector(savedTheme);
+}
+
+function changeTheme(themeName) {
+  document.documentElement.setAttribute('data-theme', themeName);
+  localStorage.setItem('theme', themeName);
+  updateThemeSelector(themeName);
+}
+
+function updateThemeSelector(themeName) {
+  const themeSelect = document.getElementById('theme-select');
+  if (themeSelect) {
+    themeSelect.value = themeName;
+  }
+}
+
+// Initialize theme on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+  initTheme();
+}
+
+// Theme selector event listener
+document.addEventListener('DOMContentLoaded', () => {
+  const themeSelect = document.getElementById('theme-select');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', (e) => {
+      changeTheme(e.target.value);
+    });
+  }
+});
 
 if ('windowControlsOverlay' in navigator) {
   navigator.windowControlsOverlay.addEventListener('geometrychange', debounce(e => {
