@@ -31,7 +31,7 @@
       </div>
       <div class="theme-selector">
         <label for="theme-select">Theme:</label>
-        <select id="theme-select">
+        <select id="theme-select" onchange="if(window.changeTheme) window.changeTheme(this.value);">
           <option value="light">Light</option>
           <option value="dark">Dark</option>
           <option value="blue">Blue</option>
@@ -58,28 +58,32 @@
     <p>Developed by: <b>Navish & Naresh</b> | Department of CSE</p>
   </footer>
 
-  <script>
-    const text = "Welcome to Typing Arena";
-    const typingText = document.getElementById("typing-text");
-    let index = 0;
-
-    function typeEffect() {
-      if (index < text.length) {
-        typingText.innerHTML = text.slice(0, index + 1) + '<span class="cursor">|</span>';
-        index++;
-        setTimeout(typeEffect, 100);
-      } else {
-        typingText.innerHTML = text + '<span class="cursor blink">|</span>';
-      }
-    }
-
-    window.onload = typeEffect;
-    if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"))
-      .catch(err => console.log("SW registration failed:", err));
-  }
-  </script>
   <script src="script.js"></script>
+  <script>
+    // Ensure script.js is loaded first
+    document.addEventListener('DOMContentLoaded', function() {
+      const text = "Welcome to Typing Arena";
+      const typingText = document.getElementById("typing-text");
+      let index = 0;
+
+      function typeEffect() {
+        if (index < text.length) {
+          typingText.innerHTML = text.slice(0, index + 1) + '<span class="cursor">|</span>';
+          index++;
+          setTimeout(typeEffect, 100);
+        } else {
+          typingText.innerHTML = text + '<span class="cursor blink">|</span>';
+        }
+      }
+
+      typeEffect();
+      
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(() => console.log("Service Worker Registered"))
+          .catch(err => console.log("SW registration failed:", err));
+      }
+    });
+  </script>
 </body>
 </html>

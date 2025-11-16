@@ -201,42 +201,57 @@ const debounce = (func, wait) => {
   };
 };
 
-// Theme Management
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeSelector(savedTheme);
-}
-
-function changeTheme(themeName) {
+// Theme Management - Simple and Direct
+window.changeTheme = function(themeName) {
+  if (!themeName) return;
+  
+  // Apply theme immediately
   document.documentElement.setAttribute('data-theme', themeName);
   localStorage.setItem('theme', themeName);
-  updateThemeSelector(themeName);
-}
-
-function updateThemeSelector(themeName) {
+  
+  // Update selector
   const themeSelect = document.getElementById('theme-select');
   if (themeSelect) {
     themeSelect.value = themeName;
   }
-}
+  
+  // Show notification
+  const existing = document.querySelector('.theme-notification');
+  if (existing) existing.remove();
+  
+  const notification = document.createElement('div');
+  notification.className = 'theme-notification';
+  notification.textContent = `✨ Theme: ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => notification.classList.add('show'), 10);
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => notification.remove(), 300);
+  }, 2000);
+  
+  console.log('Theme changed to:', themeName);
+};
 
-// Initialize theme on page load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initTheme);
-} else {
-  initTheme();
-}
-
-// Theme selector event listener
-document.addEventListener('DOMContentLoaded', () => {
-  const themeSelect = document.getElementById('theme-select');
-  if (themeSelect) {
-    themeSelect.addEventListener('change', (e) => {
-      changeTheme(e.target.value);
-    });
+// Initialize theme on load
+(function() {
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) {
+      themeSelect.value = savedTheme;
+    }
   }
-});
+  
+  // Run immediately and on DOM ready
+  initTheme();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+  }
+  window.addEventListener('load', initTheme);
+})();
 
 if ('windowControlsOverlay' in navigator) {
   navigator.windowControlsOverlay.addEventListener('geometrychange', debounce(e => {

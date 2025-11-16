@@ -31,7 +31,7 @@
       </div>
       <div class="theme-selector">
         <label for="theme-select">Theme:</label>
-        <select id="theme-select">
+        <select id="theme-select" onchange="if(window.changeTheme) window.changeTheme(this.value);">
           <option value="light">Light</option>
           <option value="dark">Dark</option>
           <option value="blue">Blue</option>
